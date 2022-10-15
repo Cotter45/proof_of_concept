@@ -69,6 +69,8 @@ async function seedData(client: any) {
         INSERT INTO tasks (title, description, userId, taskBoardId, index, completed) VALUES ('Task 3', 'Description 3', 1, 1, 3, false);
         INSERT INTO tasks (title, description, userId, taskBoardId, index, completed) VALUES ('Task 4', 'Description 4', 1, 1, 4, false);
         INSERT INTO tasks (title, description, userId, taskBoardId, index, completed) VALUES ('Task 5', 'Description 5', 1, 1, 5, false);
+
+        CREATE INDEX task_board_id ON tasks (taskBoardId);
       `)
     }
   } catch (error) {
