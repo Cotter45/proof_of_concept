@@ -15,9 +15,9 @@ export default function Tags({ board, user }: { board: TaskBoard; user: User }) 
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${board.id}`);
-      const tasks = await response.json();
-      setTasks(tasks);
+      const response = await fetch(`http://localhost:3000/boards/${board.id}`);
+      const boardWithTasks = await response.json();
+      setTasks(boardWithTasks.tasks || []);
     })();
   }, []);
 
@@ -82,11 +82,14 @@ export default function Tags({ board, user }: { board: TaskBoard; user: User }) 
     <div className="board">
       <div className="board-header">
         <h3>{board.title}</h3>
-        <button onClick={() => setEditTasks(!editTasks)} className="add-task">{editTasks ? 'Cancel' : 'Edit'}</button>
+        <button onClick={() => setEditTasks(!editTasks)} className="add-task">
+          {editTasks ? "Cancel" : "Edit"}
+        </button>
       </div>
       {editTasks && (
         <form className="edit" onSubmit={createTask}>
           <input
+            autoFocus
             type="text"
             placeholder="Title"
             className="edit_input"

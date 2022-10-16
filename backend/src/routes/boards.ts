@@ -4,6 +4,27 @@ const router = express.Router();
 const logger = getLogger('USER_ROUTE');
 import { db } from '../config/db';
 
+/* GET board. */
+router.get('/:id', async function (_req, res, _next) {
+  const { id } = _req.params;
+  try {
+    const board = await db.query(`
+      SELECT id, title, userId, index, type, (
+        SELECT json_agg(tasks) AS tasks FROM (
+          SELECT id, title, description, userId, taskBoardId, index, completed
+          FROM tasks WHERE taskBoardId = $1
+        ) tasks
+      )
+      FROM task_boards WHERE id = $1
+    `, [ id ]);
+
+    res.status(200).json(board.rows[0]);
+  } catch (err: any) {
+    logger.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* POST board. */
 router.post('/', async function (req, res, _next) {
   try {
@@ -38,8 +59,8 @@ router.delete('/:id', async function (_req, res, _next) {
   const { id } = _req.params;
   try {
     await db.query(`
-      DELETE FROM task_boards WHERE id = ${id} RETURNING id
-    `);
+      DELETE FROM task_boards WHERE id = $1 RETURNING id
+    `, [ id ]);
 
     res.status(200).json({ id: id });
   } catch (err: any) {

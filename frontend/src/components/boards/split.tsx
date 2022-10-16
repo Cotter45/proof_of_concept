@@ -15,9 +15,9 @@ export default function Split({ board, user }: { board: TaskBoard; user: User })
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${board.id}`);
-      const newTasks = await response.json();
-      setTasks(newTasks);
+      const response = await fetch(`http://localhost:3000/boards/${board.id}`);
+      const boardWithTasks = await response.json();
+      setTasks(boardWithTasks.tasks || []);
     })();
   }, []);
 
@@ -85,9 +85,10 @@ export default function Split({ board, user }: { board: TaskBoard; user: User })
           {editTasks ? "Cancel" : "Edit"}
         </button>
       </div>
-       {editTasks && (
+      {editTasks && (
         <form className="edit" onSubmit={createTask}>
           <input
+            autoFocus
             type="text"
             placeholder="Title"
             className="edit_input"
@@ -118,7 +119,14 @@ export default function Split({ board, user }: { board: TaskBoard; user: User })
                   setOpenTask(task.id);
                 }
               }}
-              style={{ flexDirection: index % 3 === 0 ? "row" : "row-reverse" }}
+              draggable
+              onDragStart={(e) => dragStart(e, task.index)}
+              onDragEnter={(e) => dragEnter(e, task.index)}
+              onDragEnd={drop}
+              style={{
+                backgroundColor: dragOverTask?.id === task.id ? "gray" : "",
+                opacity: dragTask?.id === task.id ? 0.25 : 1,
+              }}
               className={index % 5 === 0 ? "half" : "quarter"}
               key={task.id}
             >

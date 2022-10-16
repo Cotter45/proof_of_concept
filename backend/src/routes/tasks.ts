@@ -4,14 +4,14 @@ const router = express.Router();
 const logger = getLogger('USER_ROUTE');
 import { db } from '../config/db';
 
-/* GET tasks for a board. */
-router.get('/:boardId', async function (_req, res, _next) {
-  const { boardId } = _req.params;
+/* GET tasks */
+router.get('/', async function (_req, res, _next) {
+  const { limit, offset } = _req.query;
   try {
     const tasks = await db.query(`
-      SELECT id, title, description, userId, taskBoardId, index, completed FROM tasks WHERE taskBoardId = ${boardId}
-    `);
-
+      SELECT id, title, description, userId, taskBoardId, index, completed
+      FROM tasks LIMIT $1 OFFSET $2
+      `, [ limit, offset ]);
     res.status(200).json(tasks.rows);
   } catch (err: any) {
     logger.error(err);
@@ -52,8 +52,8 @@ router.delete('/:id', async function (_req, res, _next) {
   const { id } = _req.params;
   try {
     await db.query(`
-      DELETE FROM tasks WHERE id = ${id}
-    `);
+      DELETE FROM tasks WHERE id = $1
+    `, [ id ]);
 
     res.status(200).json({ message: 'Task deleted' });
   } catch (err: any) {

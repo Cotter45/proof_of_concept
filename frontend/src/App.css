@@ -40,6 +40,10 @@
   color: #888;
 }
 
+.App {
+  padding-bottom: 2rem;
+}
+
 .App-header {
   position: sticky;
   top: 0;

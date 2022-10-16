@@ -15,9 +15,9 @@ export default function List({ board, user }: { board: TaskBoard; user: User }) 
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`http://localhost:3000/tasks/${board.id}`);
-      const tasks = await response.json();
-      setTasks(tasks);
+      const response = await fetch(`http://localhost:3000/boards/${board.id}`);
+      const boardWithTasks = await response.json();
+      setTasks(boardWithTasks.tasks || []);
     })();
   }, []);
 
@@ -88,6 +88,7 @@ export default function List({ board, user }: { board: TaskBoard; user: User }) 
       {editTasks && (
         <form className="edit" onSubmit={createTask}>
           <input
+            autoFocus
             type="text"
             placeholder="Title"
             className="edit_input"

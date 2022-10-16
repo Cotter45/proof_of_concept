@@ -57,13 +57,14 @@ export default function EditBoard({ board, setBoards, user, setEditBoards }: { b
   return (
     <form onSubmit={updateBoard} className="edit">
       <input
+        autoFocus
         className="edit_input"
         type="text"
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <select 
+      <select
         className="edit_input"
         name="type"
         value={type}
@@ -81,8 +82,12 @@ export default function EditBoard({ board, setBoards, user, setEditBoards }: { b
         onChange={(e) => setIndex(e.target.value)}
       />
       <div className="edit_buttons">
-        <button onClick={deleteBoard} className="edit_button" type="button">Delete</button>
-        <button className="edit_button" type="submit">Save</button>
+        <button onClick={deleteBoard} className="edit_button" type="button">
+          Delete
+        </button>
+        <button className="edit_button" type="submit">
+          Save
+        </button>
       </div>
     </form>
   );

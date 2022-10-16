@@ -38,6 +38,9 @@ function App() {
   const [dragBoard, setDragBoard] = useState<TaskBoard>();
   const [dragOverBoard, setDragOverBoard] = useState<TaskBoard>();
   const [editBoards, setEditBoards] = useState(false);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -47,6 +50,14 @@ function App() {
       setBoards(user.boards);
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`http://localhost:3000/tasks?limit=${limit}&offset=${offset}`);
+      const tasks = await response.json();
+      setAllTasks(tasks);
+    })();
+  }, [limit]);
 
   const dragStart = (e: any, position: any) => {
     if (!editBoards) return;
@@ -62,7 +73,7 @@ function App() {
     setDragOverBoard(board);
   };
 
-  const drop = async (e: any) => {
+  const drop = (e: any) => {
     if (!editBoards) return;
     if (!dragBoard || !dragOverBoard) return;
     const newBoards = boards.map((board) => {
@@ -77,7 +88,7 @@ function App() {
     setBoards(newBoards);
     setDragBoard(undefined);
     setDragOverBoard(undefined);
-    await fetch('http://localhost:3000/boards', {
+    fetch('http://localhost:3000/boards', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -88,7 +99,7 @@ function App() {
         index: dragOverBoard.index,
       }),
     });
-    await fetch('http://localhost:3000/boards', {
+    fetch('http://localhost:3000/boards', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -135,6 +146,20 @@ function App() {
           </div>
         ))}
       </div>
+      {allTasks.map((task) => (
+        <div style={{
+          width: '80%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '1px solid #fff',
+          margin: '0 auto',
+        }} key={task.id}>
+          <h3>{task.id}. {task.title}</h3>
+          <p>{task.description}</p>
+        </div>
+      ))}
+      <button style={{ marginTop: '2rem'}} onClick={() => setLimit(limit + 10)}>Load More</button>
     </div>
   );
 }

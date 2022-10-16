@@ -31,6 +31,7 @@ export default function CreateBoard({ setBoards, user, setEditBoards, length }: 
     <form onSubmit={createBoard} className="edit">
       <h2>New Board</h2>
       <input
+        autoFocus
         className="edit_input"
         type="text"
         name="title"
@@ -44,8 +45,8 @@ export default function CreateBoard({ setBoards, user, setEditBoards, length }: 
         onChange={(e) => setType(e.target.value)}
       >
         <option value="list">List</option>
-        <option value="tags">Tag Icons</option>
-        <option value="split">Incomplete / Complete</option>
+        <option value="tags">Tags</option>
+        <option value="split">Hero</option>
       </select>
       <button className="edit_button" type="submit">
         Save
